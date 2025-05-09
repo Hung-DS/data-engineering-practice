@@ -18,6 +18,18 @@
 > - Truy cập tại https://charts.mongodb.com/charts-project-0-octxxbu/public/dashboards/ad6298d8-8fd3-476d-a4c6-c86ee18cc535
 ---
 
+# LAB8 - CASE 2
+<p>Kết quả chạy pipeline:</p>
+
+![Screenshot 2025-05-09 154333](https://github.com/user-attachments/assets/7c9fde2a-aa70-4f04-bff6-7ad76b032d68)
+
+> Thu thập và lưu trữ dữ liệu vào file.csv, chạy thành công các tiến trình
+
+![Screenshot 2025-05-09 154453](https://github.com/user-attachments/assets/dd064ef1-6a20-4c25-82b9-ee6217636dd5)
+![Screenshot 2025-05-09 154541](https://github.com/user-attachments/assets/ad98e078-d5d2-4b9e-803c-5f2d1c6fe1c9)
+
+
+
 # LAB9
 <p>Kết quả chạy pipeline:</p>
 
