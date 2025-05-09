@@ -63,7 +63,7 @@ def main():
 
     processor = Bai7(spark)
 
-    zip_path = "/var/tmp/app/Exercise-7/data/hard-drive-2022-01-01-failures.csv.zip"
+    zip_path = "/app/data/hard-drive-2022-01-01-failures.csv.zip"
     inner_file = "hard-drive-2022-01-01-failures.csv"
 
     df = processor.read_input(zip_path, inner_file)
