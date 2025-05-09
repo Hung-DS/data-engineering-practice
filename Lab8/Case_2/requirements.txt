@@ -1,8 +1,6 @@
-beautifulsoup4
-pandas
 matplotlib
 wordcloud
-requests
 psycopg2-binary
 SQLAlchemy
-tensorflow
+tensorflow>=2.12
+scikit-learn>=1.2

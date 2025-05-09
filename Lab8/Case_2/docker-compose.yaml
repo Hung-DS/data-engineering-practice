@@ -1,90 +1,37 @@
-version: '3'
+version: '3.0'
 
 services:
   postgres:
-    image: postgres:13
+    image: postgres:14-alpine
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
-    volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
-      interval: 5s
-      retries: 5
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
-
+      - 5432:5432
+  data-extract-container:
+    build:
+      context: .             # dùng Dockerfile trong thư mục hiện tại
+      dockerfile: Dockerfile
+    image: apache/airflow:2.3.0-python3.8
+    container_name: airflow-webserver
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/var/tmp/app/data
+    ports:
+      - 8080:8080
+    command: bash -c '(airflow db init && airflow users create --username admin --password admin --firstname minhds --lastname minhds --role Admin --email example@gmail.com); airflow webserver & airflow scheduler'
   pgadmin:
     image: dpage/pgadmin4:latest
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
-      - "5050:80"
+      - 80:80
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-
-  airflow-init:
-    image: apache/airflow:2.8.1
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-      _AIRFLOW_DB_UPGRADE: 'true'
-      _AIRFLOW_WWW_USER_CREATE: 'true'
-      _AIRFLOW_WWW_USER_USERNAME: 'airflow'
-      _AIRFLOW_WWW_USER_PASSWORD: 'airflow'
-      _AIRFLOW_WWW_USER_FIRSTNAME: 'Airflow'
-      _AIRFLOW_WWW_USER_LASTNAME: 'Admin'
-      _AIRFLOW_WWW_USER_EMAIL: 'admin@example.com'
-      _AIRFLOW_WWW_USER_ROLE: 'Admin'
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./data:/opt/airflow/data
-    command: db init
-    
-  airflow-webserver:
-    image: apache/airflow:2.8.1
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-      AIRFLOW__WEBSERVER__SECRET_KEY: 'temporary_key_for_session_encryption'
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./data:/opt/airflow/data
-    ports:
-      - "8080:8080"
-    command: webserver
-
-  airflow-scheduler:
-    image: apache/airflow:2.8.1
-    depends_on:
-      airflow-webserver:
-        condition: service_started
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./data:/opt/airflow/data
-    command: scheduler
-
 volumes:
-  postgres-db-volume:
-  pgadmin-data:
+  dags:
+  data_local:
+  pgadmin_data:
