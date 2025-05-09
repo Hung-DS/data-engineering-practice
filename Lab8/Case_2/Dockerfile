@@ -1,4 +1,4 @@
-FROM apache/airflow:2.8.1
+FROM apache/airflow:2.3.0-python3.8
 USER root
 # 1. Cài thư viện Python
 COPY requirements.txt /tmp/requirements.txt
